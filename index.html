@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Narozeninová interaktivní stránka</title>
+<style>
+/* --- Celkové styly --- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    background: linear-gradient(135deg, #ffe6f0, #ffd9e6);
+    overflow: hidden;
+    transition: background 0.5s;
+}
+
+.page { display: none; width: 90%; max-width: 600px; padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.9); box-shadow: 0 0 20px rgba(0,0,0,0.2);}
+.page.active { display: block; }
+
+h1 {
+    color: #d6006c;
+    margin-bottom: 20px;
+}
+
+button {
+    cursor: pointer;
+    background: linear-gradient(45deg, #ff4d6d, #ff99c8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-size: 18px;
+    margin: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255,0,100,0.5);
+}
+
+input[type="number"] {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 2px solid #ff4d6d;
+    text-align: center;
+    width: 100px;
+}
+
+img {
+    width: 150px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-radius: 15px;
+    transition: transform 0.3s, border 0.3s;
+}
+img:hover { transform: scale(1.1); border: 3px solid #ff4d6d; }
+
+.message { color: red; font-weight: bold; margin-top: 10px; }
+
+/* --- Animace srdíček --- */
+.heart {
+    position: absolute;
+    pointer-events: none;
+    font-size: 30px;
+    animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-300px) scale(1.5); opacity: 0; }
+}
+
+/* --- Animace oslavy --- */
+.confetti {
+    position: absolute;
+    pointer-events: none;
+    font-size: 30px;
+    animation: confettiFall 2s ease-out forwards;
+}
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
+}
+
+h1.pulse {
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); color: #ff4d6d; }
+}
+</style>
+</head>
+<body>
+
+<!-- Stránka 1: Kolik ti je? -->
+<div id="page1" class="page active">
+    <h1>Kolik ti je?</h1>
+    <input type="number" id="ageInput" placeholder="20" />
+    <br>
+    <button onclick="checkAge()">Odeslat</button>
+</div>
+
+<!-- Stránka 2: Jsi stará? -->
+<div id="page2" class="page">
+    <h1>Jsi stará?</h1>
+    <button onclick="answerYes()">Ano</button>
+    <button onclick="answerNo()">Ne</button>
+</div>
+
+<!-- Stránka 3: Vyber fotku -->
+<div id="page3" class="page">
+    <h1>Kde jsem nejhezčí?</h1>
+    <p>Vyber jednu fotku:</p>
+    <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+        <img src="foto1.jpg" alt="Foto 1" onclick="checkPhoto(this)">
+        <img src="foto2.jpg" alt="Foto 2" onclick="checkPhoto(this)">
+        <img src="foto3.jpg" alt="Foto 3" onclick="checkPhoto(this)">
+    </div>
+    <p id="photoMessage" class="message"></p>
+</div>
+
+<!-- Stránka 4: Miluju tě víc? -->
+<div id="page4" class="page">
+    <h1>Miluju tě víc?</h1>
+    <button onclick="checkLove('ano')">Ano</button>
+    <button onclick="checkLove('ne')">Ne</button>
+    <p id="loveMessage" class="message"></p>
+</div>
+
+<!-- Stránka 5: Oslava -->
+<div id="page5" class="page">
+    <h1 class="pulse">Hurá! 🎉</h1>
+    <p>Užij si svou narozeninovou oslavu! 🥳</p>
+    <audio id="birthdayMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
+</div>
+
+<script>
+// --- Navigace ---
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+
+// --- Page1 ---
+function checkAge() {
+    const age = document.getElementById('ageInput').value;
+    if(age == 20) showPage('page2');
+    else alert('Hmm, to není 20! Zkus to znovu.');
+}
+
+// --- Page2 ---
+function answerYes() { showPage('page3'); }
+function answerNo() { alert('No jo, tak možná příště!'); }
+
+// --- Page3 ---
+function checkPhoto(img) {
+    if(img.alt === 'Foto 3') {
+        explodeHearts();
+        showPage('page4');
+        document.getElementById('photoMessage').textContent = '';
+    } else {
+        document.getElementById('photoMessage').textContent = 'Špatně, smraďochu! Zkus znovu.';
+    }
+}
+
+// --- Page4 ---
+function checkLove(answer) {
+    if(answer==='ano') {
+        explodeHearts();
+        showPage('page5');
+        startAnimation();
+        document.getElementById('loveMessage').textContent = '';
+    } else {
+        document.getElementById('loveMessage').textContent = 'Špatně! Zkus znovu.';
+    }
+}
+
+// --- Animace srdíček při správné odpovědi ---
+function explodeHearts() {
+    for(let i=0;i<10;i++){
+        const heart=document.createElement('div');
+        heart.className='heart';
+        heart.textContent='💖';
+        heart.style.left=(window.innerWidth/2+Math.random()*200-100)+'px';
+        heart.style.top=(window.innerHeight/2+Math.random()*200-100)+'px';
+        heart.style.fontSize=(20+Math.random()*30)+'px';
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),2000);
+    }
+}
+
+// --- Animace oslavy ---
+function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+function createElement(type){
+    const el=document.createElement('div');
+    if(type==='heart'){el.textContent='💖'; el.style.color='#ff1a4d';}
+    else if(type==='confetti'){el.textContent='🎊'; el.style.color='#ffd700';}
+    el.style.left=randomInt(0,window.innerWidth)+'px';
+    el.style.top=randomInt(0,window.innerHeight)+'px';
+    el.style.fontSize=randomInt(20,50)+'px';
+    el.className=type;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3000);
+}
+
+function startAnimation(){
+    setInterval(()=>{ createElement(['heart','confetti'][randomInt(0,1)]); },400);
+    document.body.addEventListener('click',()=>{
+        for(let i=0;i<5;i++) createElement('heart');
+        for(let i=0;i<5;i++) createElement('confetti');
+    });
+}
+</script>
+</body>
+</html>
