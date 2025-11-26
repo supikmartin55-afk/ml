@@ -103,7 +103,7 @@ h1.pulse {
 <!-- Stránka 1: Kolik ti je? -->
 <div id="page1" class="page active">
     <h1>Kolik ti je?</h1>
-    <input type="number" id="ageInput" placeholder="20" />
+    <input type="number" id="ageInput" placeholder="" />
     <br>
     <button onclick="checkAge()">Odeslat</button>
 </div>
@@ -153,12 +153,12 @@ function showPage(pageId) {
 function checkAge() {
     const age = document.getElementById('ageInput').value;
     if(age == 20) showPage('page2');
-    else alert('Hmm, to není 20! Zkus to znovu.');
+    else alert('lhari!.');
 }
 
 // --- Page2 ---
 function answerYes() { showPage('page3'); }
-function answerNo() { alert('No jo, tak možná příště!'); }
+function answerNo() { alert('jen malinko 😘'); }
 
 // --- Page3 ---
 function checkPhoto(img) {
@@ -167,7 +167,7 @@ function checkPhoto(img) {
         showPage('page4');
         document.getElementById('photoMessage').textContent = '';
     } else {
-        document.getElementById('photoMessage').textContent = 'Špatně, smraďochu! Zkus znovu.';
+        document.getElementById('photoMessage').textContent = 'Špatně, smraďochu!';
     }
 }
 
@@ -179,7 +179,7 @@ function checkLove(answer) {
         startAnimation();
         document.getElementById('loveMessage').textContent = '';
     } else {
-        document.getElementById('loveMessage').textContent = 'Špatně! Zkus znovu.';
+        document.getElementById('loveMessage').textContent = 'ale joo.';
     }
 }
 
@@ -222,4 +222,5 @@ function startAnimation(){
 </script>
 </body>
 </html>
+
 
