@@ -19,15 +19,9 @@ body {
     overflow: hidden;
     transition: background 0.5s;
 }
-
 .page { display: none; width: 90%; max-width: 600px; padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.9); box-shadow: 0 0 20px rgba(0,0,0,0.2);}
 .page.active { display: block; }
-
-h1 {
-    color: #d6006c;
-    margin-bottom: 20px;
-}
-
+h1 { color: #d6006c; margin-bottom: 20px; }
 button {
     cursor: pointer;
     background: linear-gradient(45deg, #ff4d6d, #ff99c8);
@@ -39,11 +33,7 @@ button {
     margin: 10px;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(255,0,100,0.5);
-}
-
+button:hover { transform: scale(1.1); box-shadow: 0 0 15px rgba(255,0,100,0.5); }
 input[type="number"] {
     padding: 10px;
     font-size: 18px;
@@ -52,7 +42,6 @@ input[type="number"] {
     text-align: center;
     width: 100px;
 }
-
 img {
     width: 150px;
     cursor: pointer;
@@ -61,9 +50,7 @@ img {
     transition: transform 0.3s, border 0.3s;
 }
 img:hover { transform: scale(1.1); border: 3px solid #ff4d6d; }
-
 .message { color: red; font-weight: bold; margin-top: 10px; }
-
 /* --- Animace srdíček --- */
 .heart {
     position: absolute;
@@ -71,12 +58,10 @@ img:hover { transform: scale(1.1); border: 3px solid #ff4d6d; }
     font-size: 30px;
     animation: floatUp 2s ease-out forwards;
 }
-
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-300px) scale(1.5); opacity: 0; }
 }
-
 /* --- Animace oslavy --- */
 .confetti {
     position: absolute;
@@ -88,7 +73,6 @@ img:hover { transform: scale(1.1); border: 3px solid #ff4d6d; }
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(400px) rotate(360deg); opacity: 0; }
 }
-
 h1.pulse {
     animation: pulse 1s infinite;
 }
@@ -135,11 +119,35 @@ h1.pulse {
     <p id="loveMessage" class="message"></p>
 </div>
 
+<!-- Stránka 6: Opiješ se dneska hodně? -->
+<div id="pageDrink" class="page">
+    <h1>Opiješ se dneska hodně?</h1>
+    <button onclick="checkDrink('ano')">Ano</button>
+    <button onclick="checkDrink('ne')">Ne</button>
+    <button onclick="checkDrink('urcite')">Určitě</button>
+    <p id="drinkMessage" class="message"></p>
+</div>
+
+<!-- Nová stránka 7: Nejduležitější otázka -->
+<div id="pageFinalQuestion" class="page">
+    <h1>Teď ta nejdůležitější otázka, dáš mi hudlana?</h1>
+    <button onclick="checkFinal('ano')">Ano</button>
+    <button onclick="checkFinal('ne')">Ne</button>
+    <p id="finalMessage" class="message"></p>
+</div>
+
 <!-- Stránka 5: Oslava -->
 <div id="page5" class="page">
-    <h1 class="pulse">Hurá! 🎉</h1>
-    <p>Užij si svou narozeninovou oslavu! 🥳</p>
+    <h1 class="pulse">Zvládla jsi to!! 🎉</h1>
+    <p>Všechno nejlepší! 🥳</p>
+    <p>Miluju tě nejvíc! <3<3<3</p>
     <audio id="birthdayMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
+</div>
+
+<!-- Stránka Rozchod -->
+<div id="pageBreakup" class="page">
+    <h1>Rozcházíme se 😢</h1>
+    <p>Tohle je konec…</p>
 </div>
 
 <script>
@@ -175,15 +183,38 @@ function checkPhoto(img) {
 function checkLove(answer) {
     if(answer==='ano') {
         explodeHearts();
-        showPage('page5');
-        startAnimation();
+        showPage('pageDrink'); // po správné odpovědi jde na drink
         document.getElementById('loveMessage').textContent = '';
     } else {
         document.getElementById('loveMessage').textContent = 'ale joo.';
     }
 }
 
-// --- Animace srdíček při správné odpovědi ---
+// --- PageDrink ---
+function checkDrink(answer) {
+    if(answer === 'urcite') {  // správná odpověď
+        explodeHearts();
+        document.getElementById('drinkMessage').textContent = 'Správně! 🎉';
+        // automaticky přejde na nejdůležitější otázku
+        setTimeout(()=> showPage('pageFinalQuestion'), 1500);
+    } else {
+        document.getElementById('drinkMessage').textContent = 'Špatně, zkus to znovu!';
+    }
+}
+
+// --- PageFinalQuestion ---
+function checkFinal(answer) {
+    if(answer === 'ano') {
+        explodeHearts();
+        showPage('page5'); // konečná oslava
+        startAnimation();
+        document.getElementById('finalMessage').textContent = '';
+    } else {
+        showPage('pageBreakup'); // rozchod
+    }
+}
+
+// --- Animace srdíček ---
 function explodeHearts() {
     for(let i=0;i<10;i++){
         const heart=document.createElement('div');
@@ -199,7 +230,6 @@ function explodeHearts() {
 
 // --- Animace oslavy ---
 function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-
 function createElement(type){
     const el=document.createElement('div');
     if(type==='heart'){el.textContent='💖'; el.style.color='#ff1a4d';}
@@ -211,7 +241,6 @@ function createElement(type){
     document.body.appendChild(el);
     setTimeout(()=>el.remove(),3000);
 }
-
 function startAnimation(){
     setInterval(()=>{ createElement(['heart','confetti'][randomInt(0,1)]); },400);
     document.body.addEventListener('click',()=>{
@@ -222,5 +251,3 @@ function startAnimation(){
 </script>
 </body>
 </html>
-
-
